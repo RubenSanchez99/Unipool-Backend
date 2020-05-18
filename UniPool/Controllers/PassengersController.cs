@@ -18,6 +18,29 @@ namespace UniPool.Controllers
         public PassengersController(IMediator mediator) => _mediator = mediator;
 
         [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> JoinTrip([FromBody] JoinTrip.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> ExitTrip([FromBody] ExitTrip.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [Route("[action]")]
+        public async Task<IActionResult> GetCurrentTrip([FromQuery] GetCurrentTrip.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [Route("[action]")]
         public async Task<IActionResult> SearchTrips([FromQuery] SearchTrips.Query query)
         {
             var result = await _mediator.Send(query);

@@ -9,18 +9,16 @@ using UniPool.Model;
 
 namespace UniPool.Features.Passengers
 {
-    public static class GetTripInfo
+    public static class GetCurrentTrip
     {
         public class Query : IRequest<Result>
         {
-            public int TripId { get; set; }
+            public int StudentId { get; set; }
         }
 
         public class Result
         {
             public int TripId { get; set; }
-            public string DriverName { get; set; }
-            public string DriverDependency { get; set; }
             public string Destination { get; set; }
             public int AvailableSeats { get; set; }
             public int MaxCapacity { get; set; }
@@ -36,17 +34,22 @@ namespace UniPool.Features.Passengers
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var result = await _db.Trips.Include(x => x.Driver).SingleAsync(x => x.TripId == request.TripId);
+                var student = await _db.Students.SingleOrDefaultAsync(x => x.StudentId == request.StudentId);
+                if (student == null)
+                {
+                    throw new Exception("El estudiante no existe.");
+                }
+
+                var trip = await _db.Trips.Include(x => x.StudentsInTrip).ThenInclude(x => x.Student).SingleOrDefaultAsync(x => x.StudentsInTrip.Any(x => x.StudentId == student.StudentId));
+
                 return new Result
                 {
-                    TripId = result.TripId,
-                    DriverName = result.Driver.StudentName,
-                    DriverDependency = result.Driver.Dependency,
-                    Destination = result.Destination,
-                    AvailableSeats = result.MaxCapacity,
-                    MaxCapacity = result.MaxCapacity,
-                    MeetingLocation = result.MeetingLocation,
-                    Fare = result.Fare
+                    TripId = trip.TripId,
+                    Destination = trip.Destination,
+                    AvailableSeats = trip.MaxCapacity,
+                    MaxCapacity = trip.MaxCapacity,
+                    MeetingLocation = trip.MeetingLocation,
+                    Fare = trip.Fare
                 };
             }
         }

@@ -8,7 +8,7 @@ using UniPool.Model;
 
 namespace UniPool.Features.Users
 {
-    public class RegisterStudent
+    public static class RegisterStudent
     {
         public class Command : IRequest<int>
         {
@@ -38,6 +38,11 @@ namespace UniPool.Features.Users
                     AccountType = AccountType.FromValue(request.typeOfAccount),
                     Password = request.password
                 };
+
+                if (_db.Students.Any(x => x.Email == student.Email))
+                {
+                    throw new Exception("El correo ya está en uso.");
+                }
 
                 _db.Students.Add(student);
                 await _db.SaveChangesAsync();

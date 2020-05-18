@@ -9,7 +9,7 @@ using UniPool.Model;
 
 namespace UniPool.Features.Passengers
 {
-    public class SearchTrips
+    public static class SearchTrips
     {
         public class Query : IRequest<Result>
         {
@@ -39,7 +39,7 @@ namespace UniPool.Features.Passengers
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
                 var result = await _db.Trips
-                    .Where(t => t.SearchVector.Matches(request.SearchQuery))
+                    .Where(t => t.SearchVector.Matches(request.SearchQuery) && t.Status == TripStatus.Registered)
                     .Select(t => new Result.Trip
                     {
                         TripId = t.TripId,

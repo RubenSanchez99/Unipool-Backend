@@ -7,25 +7,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using UniPool.Model;
 
-namespace UniPool.Features.Passengers
+namespace UniPool.Features.Drivers
 {
-    public static class GetTripInfo
+    public static class GetCurrentTrip
     {
         public class Query : IRequest<Result>
         {
-            public int TripId { get; set; }
+            public int DriverId { get; set; }
         }
 
         public class Result
         {
             public int TripId { get; set; }
-            public string DriverName { get; set; }
-            public string DriverDependency { get; set; }
             public string Destination { get; set; }
             public int AvailableSeats { get; set; }
             public int MaxCapacity { get; set; }
             public string MeetingLocation { get; set; }
             public decimal Fare { get; set; }
+            public List<Student> StudentsInTrip {get;set;}
         }
 
         public class Handler : IRequestHandler<Query, Result>
@@ -36,17 +35,17 @@ namespace UniPool.Features.Passengers
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var result = await _db.Trips.Include(x => x.Driver).SingleAsync(x => x.TripId == request.TripId);
+                var trip = await _db.Trips.Include(x => x.StudentsInTrip).ThenInclude(x => x.Student).SingleOrDefaultAsync(x => x.DriverId == request.DriverId && x.Status != TripStatus.Finished);
+
                 return new Result
                 {
-                    TripId = result.TripId,
-                    DriverName = result.Driver.StudentName,
-                    DriverDependency = result.Driver.Dependency,
-                    Destination = result.Destination,
-                    AvailableSeats = result.MaxCapacity,
-                    MaxCapacity = result.MaxCapacity,
-                    MeetingLocation = result.MeetingLocation,
-                    Fare = result.Fare
+                    TripId = trip.TripId,
+                    Destination = trip.Destination,
+                    AvailableSeats = trip.MaxCapacity,
+                    MaxCapacity = trip.MaxCapacity,
+                    MeetingLocation = trip.MeetingLocation,
+                    Fare = trip.Fare,
+                    StudentsInTrip = trip.StudentsInTrip.Select(x => x.Student).ToList()
                 };
             }
         }

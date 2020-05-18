@@ -28,6 +28,14 @@ namespace UniPool.Model
                 .HasConversion(
                     p => p.Value,
                     p => AccountType.FromValue(p));
+
+            modelBuilder.Entity<Trip>()
+                .Property(p => p.Status)
+                .HasConversion(
+                    p => p.Value,
+                    p => TripStatus.FromValue(p));
+
+            modelBuilder.Entity<StudentTrip>().HasKey(x => new { x.TripId, x.StudentId });
         }
     }
 }

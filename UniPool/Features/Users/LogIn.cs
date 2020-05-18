@@ -9,7 +9,7 @@ using UniPool.Model;
 
 namespace UniPool.Features.Users
 {
-    public class LogIn
+    public static class LogIn
     {
         public class Query : IRequest<Result> {
             public string Email { get; set; }
