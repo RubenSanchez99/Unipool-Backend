@@ -39,9 +39,19 @@ namespace UniPool.Features.Users
                     Password = request.password
                 };
 
+                if (_db.Students.Any(x => x.StudentId == request.student_id))
+                {
+                    throw new Exception("La matrícula ya está en uso.");
+                }
+
                 if (_db.Students.Any(x => x.Email == student.Email))
                 {
                     throw new Exception("El correo ya está en uso.");
+                }
+
+                if (!request.email.EndsWith("uanl.edu.mx"))
+                {
+                    throw new Exception("El correo debe ser oficial de la UANL.");
                 }
 
                 _db.Students.Add(student);
