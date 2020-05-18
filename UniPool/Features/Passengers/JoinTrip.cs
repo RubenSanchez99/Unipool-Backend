@@ -25,7 +25,7 @@ namespace UniPool.Features.Passengers
 
             public async Task<Trip> Handle(Command request, CancellationToken cancellationToken)
             {
-                var trip = await _db.Trips.Include(x => x.StudentsInTrip).SingleOrDefaultAsync(x => x.TripId == request.TripId);
+                var trip = await _db.Trips.Include(x => x.StudentsInTrip).ThenInclude(x => x.Student).SingleOrDefaultAsync(x => x.TripId == request.TripId);
                 if (trip == null)
                 {
                     throw new Exception("El viaje no existe.");
