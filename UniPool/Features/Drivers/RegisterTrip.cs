@@ -11,7 +11,7 @@ namespace UniPool.Features.Drivers
 {
     public static class RegisterTrip
     {
-        public class Command : IRequest<Trip>
+        public class Command : IRequest<int>
         {
             public int DriverId { get; set; }
             public string Destination { get; set; }
@@ -23,13 +23,13 @@ namespace UniPool.Features.Drivers
             public decimal Fare { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Trip>
+        public class Handler : IRequestHandler<Command, int>
         {
             private readonly UniPoolContext _db;
 
             public Handler(UniPoolContext db) => _db = db;
 
-            public async Task<Trip> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<int> Handle(Command request, CancellationToken cancellationToken)
             {
                 var driver = await _db.Students.SingleAsync(x => x.StudentId == request.DriverId);
 
@@ -63,7 +63,7 @@ namespace UniPool.Features.Drivers
                 await _db.Trips.AddAsync(trip);
                 await _db.SaveChangesAsync();
 
-                return trip;
+                return trip.TripId;
             }
         }
     }
