@@ -39,7 +39,8 @@ namespace UniPool.Features.Passengers
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
                 var result = await _db.Trips
-                    .Where(t => t.SearchVector.Matches(request.SearchQuery) && t.Status == TripStatus.Registered)
+                    .Include(x => x.StudentsInTrip)
+                    .Where(t => t.SearchVector.Matches(request.SearchQuery) && t.Status == TripStatus.Registered && t.StudentsInTrip.Count < t.MaxCapacity)
                     .Select(t => new Result.Trip
                     {
                         TripId = t.TripId,
