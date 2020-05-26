@@ -22,6 +22,8 @@ namespace UniPool.Features.Passengers
             public string DriverName { get; set; }
             public string DriverDependency { get; set; }
             public string Destination { get; set; }
+            public string CoordinatesLatitude { get; set; }
+            public string CoordinatesLongitude { get; set; }
             public int AvailableSeats { get; set; }
             public int MaxCapacity { get; set; }
             public string MeetingLocation { get; set; }
@@ -43,6 +45,8 @@ namespace UniPool.Features.Passengers
                     DriverName = result.Driver.StudentName,
                     DriverDependency = result.Driver.Dependency,
                     Destination = result.Destination,
+                    CoordinatesLatitude = result.CoordinatesLatitude,
+                    CoordinatesLongitude = result.CoordinatesLongitude,
                     AvailableSeats = result.MaxCapacity,
                     MaxCapacity = result.MaxCapacity,
                     MeetingLocation = result.MeetingLocation,
